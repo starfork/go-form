@@ -20,8 +20,7 @@ func ValidateTemplate(pm string, validate ...*validator.Validate) error {
 	}
 
 	for i, item := range tpls {
-		err := v.Struct(item)
-		if err != nil {
+		if err := v.Struct(item); err != nil {
 			return fmt.Errorf("第 %d 组参数不完整: 参数需要以 nm,tt 成对出现且不能空", i+1)
 		}
 	}
@@ -57,8 +56,7 @@ func ValidateInstance(pm, tplPm string, validate ...*validator.Validate) error {
 		}
 
 		if rule != "" {
-			err := v.Var(instance.V, rule)
-			if err != nil {
+			if err := v.Var(instance.V, rule); err != nil {
 				return fmt.Errorf("第 %d: 键  '%s' 校验失败, 值 '%s' 不符合规则 '%s'", i+1, instance.K, instance.V, rule)
 			}
 		}
