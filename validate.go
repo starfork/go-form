@@ -7,10 +7,19 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// 自动验证
+func Validate(pm, tpl string, validate ...*validator.Validate) error {
+	if tpl == "" {
+		return ValidateTemplate(pm, validate...)
+	}
+	return ValidateInstance(pm, tpl, validate...)
+}
+
+// 验证模版
 func ValidateTemplate(pm string, validate ...*validator.Validate) error {
 	var tpls []Template
 	if err := jsoniter.Unmarshal([]byte(pm), &tpls); err != nil {
-		return err
+		return fmt.Errorf("template data json error %+v", err)
 	}
 	var v *validator.Validate
 	if len(validate) > 0 {
@@ -28,11 +37,17 @@ func ValidateTemplate(pm string, validate ...*validator.Validate) error {
 	return nil
 }
 
-func ValidateInstance(pm, tplPm string, validate ...*validator.Validate) error {
+// 验证实例
+func ValidateInstance(pm, tpl string, validate ...*validator.Validate) error {
 	var tpls []Template
-	if err := jsoniter.Unmarshal([]byte(pm), &tpls); err != nil {
-		return err
+	if err := jsoniter.Unmarshal([]byte(tpl), &tpls); err != nil {
+		return fmt.Errorf("template data json error %+v", err)
 	}
+	var instances []Instance
+	if err := jsoniter.Unmarshal([]byte(pm), &instances); err != nil {
+		return fmt.Errorf("instance data json error %+v", err)
+	}
+
 	var v *validator.Validate
 	if len(validate) > 0 {
 		v = validate[0]
@@ -40,10 +55,6 @@ func ValidateInstance(pm, tplPm string, validate ...*validator.Validate) error {
 		v = validator.New()
 	}
 
-	var instances []Instance
-	if err := jsoniter.Unmarshal([]byte(pm), &instances); err != nil {
-		return err
-	}
 	tplMap := make(map[string]string)
 	for _, tpl := range tpls {
 		tplMap[tpl.Nm] = tpl.R
