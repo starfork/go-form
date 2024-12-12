@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGatewayToGameConfig(t *testing.T) {
+func TestGatewayToConfig(t *testing.T) {
 	type TestConfig struct {
 		V1 string
 		V2 string

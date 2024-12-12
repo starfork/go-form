@@ -5,7 +5,7 @@ type Template struct {
 	Tt string `validate:"required" json:"tt"` //字段标题
 	Nm string `validate:"required" json:"nm"` //字段名
 	//表单类型
-	T string `validate:"oneof=input select textarea" json:"t"`
+	T string `validate:"omitempty,oneof=input select textarea" json:"t"`
 	//表单验证规则
 	R string `json:"r"`
 }
