@@ -13,10 +13,10 @@ func TestValidateTemplate(t *testing.T) {
 }
 
 func TestValidateInstance(t *testing.T) {
-	pm := []byte(`[{"k":"api","v":"a"},{"k":"key","v":"keykey"}]`)
+	pm := []byte(`[{"k":"api","v":11},{"k":"key","v":"keykey"}]`)
 	tplPm := []byte(`[{"nm":"api","tt":"名称"},{"nm":"key","tt":"密钥"}]`)
 	fmt.Println(ValidateInstance(pm, tplPm))
-	tplPm2 := []byte(`[{"nm":"api","tt":"名称","r":"gt=1"},{"nm":"key","tt":"密钥"}]`)
+	tplPm2 := []byte(`[{"nm":"api","tt":"名称","r":"gt=10"},{"nm":"key","tt":"密钥"}]`)
 	fmt.Println(ValidateInstance(pm, tplPm2))
 }
 

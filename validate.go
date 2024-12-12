@@ -66,6 +66,7 @@ func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
 		}
 
 		if rule != "" {
+
 			if err := v.Var(instance.V, rule); err != nil {
 				return fmt.Errorf("第 %d: 键  '%s' 校验失败, 值 '%s' 不符合规则 '%s'", i+1, instance.K, instance.V, rule)
 			}

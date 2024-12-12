@@ -12,5 +12,5 @@ type Template struct {
 
 type Instance struct {
 	K string `json:"k"` //字段名
-	V string `json:"v"` //字段值
+	V any    `json:"v"` //字段值
 }
