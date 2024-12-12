@@ -1,7 +1,9 @@
 package goform
 
 import (
+	"fmt"
 	"reflect"
+	"strconv"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -23,7 +25,24 @@ func Struct(jsonData []byte, target interface{}) error {
 			}
 			fieldVal := val.Field(i)
 			if fieldVal.CanSet() {
-				fieldVal.SetString(param.V)
+				switch fieldVal.Kind() {
+				case reflect.String:
+					fieldVal.SetString(param.V)
+				case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+					if intVal, err := strconv.ParseInt(param.V, 10, 64); err == nil {
+						fieldVal.SetInt(intVal)
+					}
+				case reflect.Float32, reflect.Float64:
+					if floatVal, err := strconv.ParseFloat(param.V, 64); err == nil {
+						fieldVal.SetFloat(floatVal)
+					}
+				case reflect.Bool:
+					if boolVal, err := strconv.ParseBool(param.V); err == nil {
+						fieldVal.SetBool(boolVal)
+					}
+				default:
+					fmt.Printf("Unsupported field type: %s\n", fieldVal.Kind())
+				}
 			}
 		}
 	}

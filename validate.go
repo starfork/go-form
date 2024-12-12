@@ -61,13 +61,11 @@ func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
 	}
 	for i, instance := range instances {
 		rule, exists := tplMap[instance.K]
-		fmt.Println(rule)
 		if !exists {
 			return fmt.Errorf("第 %d: 键 '%s' 不在模版参数中", i+1, instance.K)
 		}
 
 		if rule != "" {
-			fmt.Println(rule)
 			if err := v.Var(instance.V, rule); err != nil {
 				return fmt.Errorf("第 %d: 键  '%s' 校验失败, 值 '%s' 不符合规则 '%s'", i+1, instance.K, instance.V, rule)
 			}
