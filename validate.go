@@ -8,15 +8,15 @@ import (
 )
 
 // 自动验证
-func Validate(pm, tpl string, validate ...*validator.Validate) error {
-	if tpl == "" {
+func Validate(pm, tpl []byte, validate ...*validator.Validate) error {
+	if tpl == nil {
 		return ValidateTemplate(pm, validate...)
 	}
 	return ValidateInstance(pm, tpl, validate...)
 }
 
 // 验证模版
-func ValidateTemplate(pm string, validate ...*validator.Validate) error {
+func ValidateTemplate(pm []byte, validate ...*validator.Validate) error {
 	var tpls []Template
 	if err := jsoniter.Unmarshal([]byte(pm), &tpls); err != nil {
 		return fmt.Errorf("template data json error %+v", err)
@@ -38,13 +38,13 @@ func ValidateTemplate(pm string, validate ...*validator.Validate) error {
 }
 
 // 验证实例
-func ValidateInstance(pm, tpl string, validate ...*validator.Validate) error {
+func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
 	var tpls []Template
-	if err := jsoniter.Unmarshal([]byte(tpl), &tpls); err != nil {
+	if err := jsoniter.Unmarshal(tpl, &tpls); err != nil {
 		return fmt.Errorf("template data json error %+v", err)
 	}
 	var instances []Instance
-	if err := jsoniter.Unmarshal([]byte(pm), &instances); err != nil {
+	if err := jsoniter.Unmarshal(pm, &instances); err != nil {
 		return fmt.Errorf("instance data json error %+v", err)
 	}
 
@@ -59,14 +59,15 @@ func ValidateInstance(pm, tpl string, validate ...*validator.Validate) error {
 	for _, tpl := range tpls {
 		tplMap[tpl.Nm] = tpl.R
 	}
-
 	for i, instance := range instances {
 		rule, exists := tplMap[instance.K]
+		fmt.Println(rule)
 		if !exists {
 			return fmt.Errorf("第 %d: 键 '%s' 不在模版参数中", i+1, instance.K)
 		}
 
 		if rule != "" {
+			fmt.Println(rule)
 			if err := v.Var(instance.V, rule); err != nil {
 				return fmt.Errorf("第 %d: 键  '%s' 校验失败, 值 '%s' 不符合规则 '%s'", i+1, instance.K, instance.V, rule)
 			}
