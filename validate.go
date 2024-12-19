@@ -18,7 +18,7 @@ func Validate(pm, tpl []byte, validate ...*validator.Validate) error {
 // 验证模版
 func ValidateTemplate(pm []byte, validate ...*validator.Validate) error {
 	var tpls []Template
-	if err := jsoniter.Unmarshal([]byte(pm), &tpls); err != nil {
+	if err := jsoniter.Unmarshal(pm, &tpls); err != nil {
 		return fmt.Errorf("template data json error %+v", err)
 	}
 	var v *validator.Validate
