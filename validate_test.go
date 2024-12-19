@@ -11,6 +11,10 @@ func TestValidateTemplate(t *testing.T) {
 	pm := []byte(`[{"nm":"api","tt":"名称"},{"nm":"key","tt":"密钥"}]`)
 	fmt.Println(ValidateTemplate(pm))
 }
+func TestValidate(t *testing.T) {
+	pm := []byte(`[{"nm":"api","tt":"名称"},{"nm":"key","tt":"密钥"}]`)
+	fmt.Println(Validate(pm, nil))
+}
 
 func TestValidateInstance(t *testing.T) {
 	pm := []byte(`[{"k":"api","v":11},{"k":"key","v":"keykey"}]`)

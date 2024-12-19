@@ -9,7 +9,7 @@ import (
 
 // 自动验证
 func Validate(pm, tpl []byte, validate ...*validator.Validate) error {
-	if tpl == nil {
+	if len(tpl) == 0 {
 		return ValidateTemplate(pm, validate...)
 	}
 	return ValidateInstance(pm, tpl, validate...)
