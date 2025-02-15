@@ -8,6 +8,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// 讲参数转换成需要的结构体
 func Struct(jsonData []byte, target interface{}) error {
 
 	var params []Instance

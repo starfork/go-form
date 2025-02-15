@@ -44,3 +44,5 @@ func TestConvertStructVar(t *testing.T) {
 	fmt.Println(v.Var(tc.V3, "gt=11"))
 	fmt.Println(v.Var(tc.V3, "gte=10"))
 }
+
+//type exampleForm struct{}
