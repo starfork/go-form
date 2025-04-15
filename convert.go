@@ -19,7 +19,7 @@ func Struct(jsonData []byte, target interface{}) error {
 	typ := val.Type()
 
 	for _, param := range params {
-		for i := 0; i < typ.NumField(); i++ {
+		for i := range typ.NumField() {
 			field := typ.Field(i)
 			if field.Name == "" || field.Name != capitalize(param.K) {
 				continue
@@ -35,31 +35,31 @@ func Struct(jsonData []byte, target interface{}) error {
 				if v, ok := param.V.(string); ok {
 					fieldVal.SetString(v)
 				} else {
-					fmt.Printf("Field %d: Cannot set non-string value '%v' to string field\n", i, param.V)
+					return fmt.Errorf("field %d: Cannot set non-string value '%v' to string field", i, param.V)
 				}
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 				intVal, err := toInt(param.V)
 				if err == nil {
 					fieldVal.SetInt(intVal)
 				} else {
-					fmt.Printf("Field %d: Cannot convert '%v' to int: %v\n", i, param.V, err)
+					return fmt.Errorf("field %d: Cannot convert '%v' to int: %v", i, param.V, err)
 				}
 			case reflect.Float32, reflect.Float64:
 				floatVal, err := toFloat(param.V)
 				if err == nil {
 					fieldVal.SetFloat(floatVal)
 				} else {
-					fmt.Printf("Field %d: Cannot convert '%v' to float: %v\n", i, param.V, err)
+					return fmt.Errorf("field %d: Cannot convert '%v' to float: %v", i, param.V, err)
 				}
 			case reflect.Bool:
 				boolVal, err := toBool(param.V)
 				if err == nil {
 					fieldVal.SetBool(boolVal)
 				} else {
-					fmt.Printf("Field %d: Cannot convert '%v' to bool: %v\n", i, param.V, err)
+					return fmt.Errorf("field %d: Cannot convert '%v' to bool: %v", i, param.V, err)
 				}
 			default:
-				fmt.Printf("Field %d: Unsupported field type: %s\n", i, fieldVal.Kind())
+				return fmt.Errorf("field %d: Unsupported field type: %s", i, fieldVal.Kind())
 			}
 		}
 	}
