@@ -25,16 +25,16 @@ func TestConvertToStruct(t *testing.T) {
 	tc := &testStruct{}
 
 	Struct(testData, tc)
-	fmt.Println(tc)
+	fmt.Printf("%+v \n", tc)
 	data2 := []Instance{
 		{K: "v3", V: "32"},
 	}
 	b1, _ := json.Marshal(data2)
 	Struct(b1, tc)
-	fmt.Println(tc)
+	fmt.Printf("%+v \n", tc)
 
 	Struct(testData1, tc)
-	fmt.Println(tc)
+	fmt.Printf("%+v \n", tc)
 
 }
 func TestConvertStructVar(t *testing.T) {

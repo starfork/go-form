@@ -9,7 +9,7 @@ import (
 )
 
 // 讲参数转换成需要的结构体
-func Struct(jsonData []byte, target interface{}) error {
+func Struct(jsonData []byte, target any) error {
 
 	var params []Instance
 	if err := jsoniter.Unmarshal(jsonData, &params); err != nil {
