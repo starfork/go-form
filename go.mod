@@ -1,6 +1,6 @@
 module github.com/starfork/go-form
 
-go 1.24.5
+go 1.25.2
 
 require github.com/go-playground/validator/v10 v10.27.0
 
