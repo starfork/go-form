@@ -44,6 +44,13 @@ func Struct(jsonData []byte, target any) error {
 				} else {
 					return fmt.Errorf("field %d: Cannot convert '%v' to int: %v", i, param.V, err)
 				}
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				uintVal, err := toUint(param.V)
+				if err == nil {
+					fieldVal.SetUint(uintVal)
+				} else {
+					return fmt.Errorf("field %d: Cannot convert '%v' to uint: %v", i, param.V, err)
+				}
 			case reflect.Float32, reflect.Float64:
 				floatVal, err := toFloat(param.V)
 				if err == nil {
@@ -79,8 +86,25 @@ func toInt(v any) (int64, error) {
 		return strconv.ParseInt(val, 10, 64)
 	case int, int8, int16, int32, int64:
 		return reflect.ValueOf(val).Int(), nil
+	case uint, uint8, uint16, uint32, uint64:
+		return int64(reflect.ValueOf(val).Uint()), nil
 	case float32, float64:
 		return int64(reflect.ValueOf(val).Float()), nil
+	default:
+		return 0, fmt.Errorf("unsupported type '%T'", v)
+	}
+}
+
+func toUint(v any) (uint64, error) {
+	switch val := v.(type) {
+	case string:
+		return strconv.ParseUint(val, 10, 64)
+	case int, int8, int16, int32, int64:
+		return uint64(reflect.ValueOf(val).Int()), nil
+	case uint, uint8, uint16, uint32, uint64:
+		return reflect.ValueOf(val).Uint(), nil
+	case float32, float64:
+		return uint64(reflect.ValueOf(val).Float()), nil
 	default:
 		return 0, fmt.Errorf("unsupported type '%T'", v)
 	}
@@ -92,6 +116,8 @@ func toFloat(v any) (float64, error) {
 		return strconv.ParseFloat(val, 64)
 	case int, int8, int16, int32, int64:
 		return float64(reflect.ValueOf(val).Int()), nil
+	case uint, uint8, uint16, uint32, uint64:
+		return float64(reflect.ValueOf(val).Uint()), nil
 	case float32, float64:
 		return reflect.ValueOf(val).Float(), nil
 	default:

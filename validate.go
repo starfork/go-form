@@ -3,12 +3,11 @@ package goform
 import (
 	"fmt"
 
-	"github.com/go-playground/validator/v10"
 	jsoniter "github.com/json-iterator/go"
 )
 
 // 自动验证
-func Validate(pm, tpl []byte, validate ...*validator.Validate) error {
+func Validate(pm, tpl []byte, validate ...Validator) error {
 	if len(tpl) == 0 {
 		return ValidateTemplate(pm, validate...)
 	}
@@ -16,20 +15,27 @@ func Validate(pm, tpl []byte, validate ...*validator.Validate) error {
 }
 
 // 验证模版
-func ValidateTemplate(pm []byte, validate ...*validator.Validate) error {
+func ValidateTemplate(pm []byte, validate ...Validator) error {
 	var tpls []Template
 	if err := jsoniter.Unmarshal(pm, &tpls); err != nil {
 		return fmt.Errorf("template data json error %+v", err)
 	}
-	var v *validator.Validate
+	var v Validator
 	if len(validate) > 0 {
 		v = validate[0]
-	} else {
-		v = validator.New()
+	}
+
+	if v != nil {
+		for i, item := range tpls {
+			if err := v.Struct(item); err != nil {
+				return fmt.Errorf("第 %d 组参数不完整: 参数需要以 nm,tt 成对出现且不能空", i+1)
+			}
+		}
+		return nil
 	}
 
 	for i, item := range tpls {
-		if err := v.Struct(item); err != nil {
+		if item.Nm == "" || item.Tt == "" {
 			return fmt.Errorf("第 %d 组参数不完整: 参数需要以 nm,tt 成对出现且不能空", i+1)
 		}
 	}
@@ -38,7 +44,7 @@ func ValidateTemplate(pm []byte, validate ...*validator.Validate) error {
 }
 
 // 验证实例
-func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
+func ValidateInstance(pm, tpl []byte, validate ...Validator) error {
 	var tpls []Template
 	if err := jsoniter.Unmarshal(tpl, &tpls); err != nil {
 		return fmt.Errorf("template data json error %+v", err)
@@ -48,11 +54,9 @@ func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
 		return fmt.Errorf("instance data json error %+v", err)
 	}
 
-	var v *validator.Validate
+	var v Validator
 	if len(validate) > 0 {
 		v = validate[0]
-	} else {
-		v = validator.New()
 	}
 
 	tplMap := make(map[string]string)
@@ -65,8 +69,7 @@ func ValidateInstance(pm, tpl []byte, validate ...*validator.Validate) error {
 			return fmt.Errorf("第 %d: 键 '%s' 不在模版参数中", i+1, instance.K)
 		}
 
-		if rule != "" {
-
+		if rule != "" && v != nil {
 			if err := v.Var(instance.V, rule); err != nil {
 				return fmt.Errorf("第 %d: 键  '%s' 校验失败, 值 '%s' 不符合规则 '%s'", i+1, instance.K, instance.V, rule)
 			}

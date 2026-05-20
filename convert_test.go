@@ -16,7 +16,7 @@ type testStruct struct {
 }
 
 var (
-	testData  = []byte(`[{"k":"v1","v":"v1value"},{"k":"v2","v":"v2value"}]`)
+	testData  = []byte(`[{"k":"v1","v":"v1value"},{"k":"v2","v":"v2value"},{"k":"v3","v":"111"},{"k":"v4","v":"222"}]`)
 	testData1 = []byte(`[{"k":"v3","v":"10"},{"k":"v2","v":"v2value"}]`)
 )
 
@@ -38,9 +38,10 @@ func TestConvertToStruct(t *testing.T) {
 
 }
 func TestConvertStructVar(t *testing.T) {
-	v := validator.New()
 	tc := &testStruct{}
 	Struct(testData1, tc)
+
+	v := validator.New()
 	fmt.Println(v.Var(tc.V3, "gt=11"))
 	fmt.Println(v.Var(tc.V3, "gte=10"))
 }
